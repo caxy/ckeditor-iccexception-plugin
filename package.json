@@ -1,6 +1,6 @@
 {
   "name": "ckeditor-iccexception-plugin",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "CKEditor plugin for adding exceptions and exception lists",
   "main": "index.js",
   "repository": "git+https://github.com/InternationalCodeCouncil/ckeditor-iccexception-plugin",
