@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "/";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,13 +73,64 @@
 "use strict";
 
 
-(function () {
-  var hasList = function hasList(element) {
-    return element.find(function (child) {
-      return child.name === 'ol' || child.name === 'ul';
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var hasList = exports.hasList = function hasList(element) {
+    return find(element, function (child) {
+        return child.name === 'ol' || child.name === 'ul';
     }, true).length > 0;
-  };
+};
 
+/**
+ * Implementation of CKEDITOR.htmlParser.element.find() that was added in 4.6 for backwards compatibility reasons.
+ *
+ * @param {CKEDITOR.htmlParser.element} element
+ * @param {function|string}             criteria
+ * @param {boolean}                     recursive
+ *
+ * @returns {Array}
+ */
+var find = exports.find = function find(element, criteria) {
+    var recursive = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    if (element.find) {
+        return element.find(criteria, recursive);
+    }
+
+    var ret = [];
+
+    for (var i = 0; i < element.children.length; i++) {
+        var curChild = element.children[i];
+
+        if (typeof criteria == 'function' && criteria(curChild)) {
+            ret.push(curChild);
+        } else if (typeof criteria == 'string' && curChild.name === criteria) {
+            ret.push(curChild);
+        }
+
+        if (recursive && curChild.type === CKEDITOR.NODE_ELEMENT) {
+            ret = ret.concat(find(curChild, criteria, recursive));
+        }
+    }
+
+    return ret;
+};
+
+exports.default = {
+    hasList: hasList
+};
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _common = __webpack_require__(0);
+
+(function () {
   CKEDITOR.dtd.$editable.span = 1;
   CKEDITOR.plugins.add('standardexception', {
     requires: 'widget',
@@ -103,7 +154,7 @@
         requiredContent: 'div(exception); span(run_in);',
 
         upcast: function upcast(element) {
-          return element.name === 'div' && element.hasClass('exception') && !hasList(element);
+          return element.name === 'div' && element.hasClass('exception') && !(0, _common.hasList)(element);
         }
       });
     }

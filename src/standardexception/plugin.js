@@ -1,6 +1,6 @@
-(function () {
-  const hasList = element => element.find(child => child.name === 'ol' || child.name === 'ul', true).length > 0
+import { hasList } from '../common/common';
 
+(function () {
   CKEDITOR.dtd.$editable.span = 1
   CKEDITOR.plugins.add(
     'standardexception', {

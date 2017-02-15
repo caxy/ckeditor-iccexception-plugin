@@ -65,8 +65,6 @@ for (let i = 0; i < project.pluginNames.length; i++) {
     // Append the plugin name to the output path.
     pluginWebpackConfig.output.path = pluginWebpackConfig.output.path + '/' + pluginName;
 
-    console.log(pluginWebpackConfig.output);
-
     // Add this plugin's config to the webpack configuration.
     webpackMultipleConfigs.push(pluginWebpackConfig);
 }
