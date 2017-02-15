@@ -8,7 +8,8 @@ const webpackConfig = {
     devtool: false,
     resolve: {
         modules: [
-            project.paths.client()
+            project.paths.client(),
+            'node_modules'
         ]
     },
     module: {}
