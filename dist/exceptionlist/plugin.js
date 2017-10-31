@@ -139,7 +139,7 @@ var _common = __webpack_require__(0);
       editor.widgets.add('exceptionlist', {
         button: 'Add an exception list',
 
-        template: '<div class="exception">\n            <p>\n              <span class="run_in">\n                <span class="bold">Exceptions:</span>\n              </span>\n              Add optional paragraph text here\n            </p>\n            <div class="list">\n              <ol class="no_mark">\n                <li>\n                  <p>\n                    <span class="label">1.</span> Exception list item\n                  </p>\n                </li>\n                <li>\n                  <p>\n                    <span class="label">2.</span> Exception list item\n                  </p>\n                </li>\n              </ol>            \n            </div>\n          </div>',
+        template: '<div class="exception">\n              <p>\n                <span class="run_in">\n                  <span class="bold">Exceptions:</span>\n                </span>\n                Add optional paragraph text here\n              </p>\n              <div class="list">\n                <ol class="no_mark">\n                  <li>\n                    <p>\n                      <span class="label">1.</span> Exception list item\n                    </p>\n                  </li>\n                  <li>\n                    <p>\n                      <span class="label">2.</span> Exception list item\n                    </p>\n                  </li>\n                </ol>\n              </div>\n            </div>',
 
         editables: {
           content: {
@@ -157,6 +157,26 @@ var _common = __webpack_require__(0);
           return element.name === 'div' && element.hasClass('exception') && (0, _common.hasList)(element);
         }
       });
+    },
+    afterInit: function afterInit(editor) {
+      editor.commands.equation.contextSensitive = true;
+      editor.commands.equation.refresh = function (editor) {
+        if (!editor) {
+          return;
+        }
+
+        var startElement = editor.getSelection().getStartElement();
+        var path = new CKEDITOR.dom.elementPath(startElement);
+        var element = path.lastElement && path.lastElement.getAscendant('div', true);
+
+        if (!(element && (element.hasClass('list') || element.hasClass('exception')))) {
+          this.setState(CKEDITOR.TRISTATE_DISABLED);
+        } else {
+          this.setState(CKEDITOR.TRISTATE_OFF);
+        }
+
+        editor.commands.equation.refresh();
+      };
     }
   });
 })();
