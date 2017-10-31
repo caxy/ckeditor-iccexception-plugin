@@ -12,27 +12,27 @@ import { hasList } from '../common/common';
             button: 'Add an exception list',
 
             template: `<div class="exception">
-            <p>
-              <span class="run_in">
-                <span class="bold">Exceptions:</span>
-              </span>
-              Add optional paragraph text here
-            </p>
-            <div class="list">
-              <ol class="no_mark">
-                <li>
-                  <p>
-                    <span class="label">1.</span> Exception list item
-                  </p>
-                </li>
-                <li>
-                  <p>
-                    <span class="label">2.</span> Exception list item
-                  </p>
-                </li>
-              </ol>            
-            </div>
-          </div>`,
+              <p>
+                <span class="run_in">
+                  <span class="bold">Exceptions:</span>
+                </span>
+                Add optional paragraph text here
+              </p>
+              <div class="list">
+                <ol class="no_mark">
+                  <li>
+                    <p>
+                      <span class="label">1.</span> Exception list item
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      <span class="label">2.</span> Exception list item
+                    </p>
+                  </li>
+                </ol>
+              </div>
+            </div>`,
 
             editables: {
               content: {
@@ -49,6 +49,26 @@ import { hasList } from '../common/common';
             upcast: (element) => element.name === 'div' && element.hasClass('exception') && hasList(element)
           }
         )
+      },
+      afterInit: (editor) => {
+        editor.commands.equation.contextSensitive = true
+        editor.commands.equation.refresh = function(editor) {
+          if (!editor) {
+            return
+          }
+
+          const startElement = editor.getSelection().getStartElement()
+          const path = new CKEDITOR.dom.elementPath(startElement)
+          const element = path.lastElement && path.lastElement.getAscendant('div', true)
+
+          if (!(element && (element.hasClass('list') || element.hasClass('exception')))) {
+            this.setState(CKEDITOR.TRISTATE_DISABLED)
+          } else {
+            this.setState(CKEDITOR.TRISTATE_OFF)
+          }
+
+          editor.commands.equation.refresh()
+        }
       }
     }
   )
