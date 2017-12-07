@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-
+/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -46,7 +46,7 @@
 /******/ 			});
 /******/ 		}
 /******/ 	};
-
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -55,13 +55,13 @@
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-
+/******/
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/";
-
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
@@ -76,6 +76,10 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+/**
+ * @param element
+ * @returns {boolean}
+ */
 var hasList = exports.hasList = function hasList(element) {
     return find(element, function (child) {
         return child.name === 'ol' || child.name === 'ul';
@@ -117,8 +121,25 @@ var find = exports.find = function find(element, criteria) {
     return ret;
 };
 
+/**
+ * @param widget
+ * @param object
+ */
+var toggleWidgetState = exports.toggleWidgetState = function toggleWidgetState(widget, object) {
+    // disable button On Focus
+    object.onfocus = function () {
+        widget.setState(CKEDITOR.TRISTATE_DISABLED);
+    };
+
+    // restore button On Focus Out
+    object.onfocusout = function () {
+        widget.setState(CKEDITOR.TRISTATE_OFF);
+    };
+};
+
 exports.default = {
-    hasList: hasList
+    hasList: hasList,
+    toggleWidgetState: toggleWidgetState
 };
 
 /***/ }),
@@ -131,54 +152,82 @@ exports.default = {
 var _common = __webpack_require__(0);
 
 (function () {
-  CKEDITOR.dtd.$editable.span = 1;
-  CKEDITOR.plugins.add('exceptionlist', {
-    requires: 'widget',
-    icons: 'exceptionlist',
-    init: function init(editor) {
-      editor.widgets.add('exceptionlist', {
-        button: 'Add an exception list',
+    var nestedStandardException = function nestedStandardException(editor, event, name) {
+        // running this code only when "standardexception" widget is initiated
+        if (editor.commands.standardexception !== undefined) {
+            var sender = event.sender;
+            var content = sender.editables.content.$;
+            var list = sender.editables.list.$;
+            var widget = editor.commands[name];
 
-        template: '<div class="exception">\n              <p>\n                <span class="run_in">\n                  <span class="bold">Exceptions:</span>\n                </span>\n                Add optional paragraph text here\n              </p>\n              <div class="list">\n                <ol class="no_mark">\n                  <li>\n                    <p>\n                      <span class="label">1.</span> Exception list item\n                    </p>\n                  </li>\n                  <li>\n                    <p>\n                      <span class="label">2.</span> Exception list item\n                    </p>\n                  </li>\n                </ol>\n              </div>\n            </div>',
+            (0, _common.toggleWidgetState)(widget, content);
+            (0, _common.toggleWidgetState)(widget, list);
+        }
+    };
 
-        editables: {
-          content: {
-            selector: '.exception p'
-          },
-          list: {
-            selector: 'div.list'
-          }
+    CKEDITOR.dtd.$editable.span = 1;
+    CKEDITOR.plugins.add('exceptionlist', {
+        requires: 'widget',
+        icons: 'exceptionlist',
+        init: function init(editor) {
+            editor.widgets.add('exceptionlist', {
+                button: 'Add an exception list',
+
+                template: '<div class="exception">\n                            <p>\n                                <span class="run_in">\n                                    <span class="bold">Exceptions:</span>\n                                </span>\n                                Add optional paragraph text here\n                            </p>\n                            <div class="list">\n                                <ol class="no_mark">\n                                    <li>\n                                        <p>\n                                            <span class="label">1.</span> Exception list item\n                                        </p>\n                                    </li>\n                                    <li>\n                                        <p>\n                                            <span class="label">2.</span> Exception list item\n                                        </p>\n                                    </li>\n                                </ol>\n                            </div>\n                        </div>',
+
+                editables: {
+                    content: {
+                        selector: '.exception p'
+                    },
+                    list: {
+                        selector: 'div.list'
+                    }
+                },
+
+                allowedContent: 'div(!exception); span(!run_in); div(!list);',
+                requiredContent: 'div(exception); span(run_in); div(list);',
+
+                nestedEditable: function nestedEditable(event) {
+                    console.log('exceptionlist nestedEditable');
+
+                    console.log(event);
+                },
+
+                // function fires when initially entering current widget's editable area
+                edit: function edit(event) {
+                    // disable "Exception List" button when editing "Regular Exception"
+                    nestedStandardException(editor, event, 'standardexception');
+                },
+
+                upcast: function upcast(element) {
+                    return element.name === 'div' && element.hasClass('exception') && (0, _common.hasList)(element);
+                }
+            });
         },
+        afterInit: function afterInit(editor) {
+            if (!editor) {
+                return;
+            }
 
-        allowedContent: 'div(!exception); span(!run_in); div(!list);',
-        requiredContent: 'div(exception); span(run_in); div(list);',
+            // configure Caxy Equation -- if available
+            if (editor.commands.equation !== undefined) {
+                editor.commands.equation.contextSensitive = true;
+                editor.commands.equation.refresh = function (editor) {
+                    var startElement = editor.getSelection().getStartElement();
+                    var path = new CKEDITOR.dom.elementPath(startElement);
+                    var element = path.lastElement && path.lastElement.getAscendant('div', true);
 
-        upcast: function upcast(element) {
-          return element.name === 'div' && element.hasClass('exception') && (0, _common.hasList)(element);
+                    if (!(element && (element.hasClass('list') || element.hasClass('exception')))) {
+                        this.setState(CKEDITOR.TRISTATE_DISABLED);
+                    } else {
+                        this.setState(CKEDITOR.TRISTATE_OFF);
+                    }
+
+                    editor.commands.equation.refresh();
+                };
+            }
         }
-      });
-    },
-    afterInit: function afterInit(editor) {
-      editor.commands.equation.contextSensitive = true;
-      editor.commands.equation.refresh = function (editor) {
-        if (!editor) {
-          return;
-        }
-
-        var startElement = editor.getSelection().getStartElement();
-        var path = new CKEDITOR.dom.elementPath(startElement);
-        var element = path.lastElement && path.lastElement.getAscendant('div', true);
-
-        if (!(element && (element.hasClass('list') || element.hasClass('exception')))) {
-          this.setState(CKEDITOR.TRISTATE_DISABLED);
-        } else {
-          this.setState(CKEDITOR.TRISTATE_OFF);
-        }
-
-        editor.commands.equation.refresh();
-      };
-    }
-  });
+    });
 })();
 
 /***/ })
