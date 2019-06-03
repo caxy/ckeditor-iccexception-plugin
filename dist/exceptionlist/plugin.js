@@ -140,7 +140,6 @@ var _common = __webpack_require__(0);
       // If the target element has a list ancestor, dispatch a custom event with its id.
       editor.on('doubleclick', function (evt) {
         var target = evt.data.element;
-        // const ascendant = target.getAscendant((el) => el && el.getName && el.getName() === 'div' && el.hasClass('list'))
         var exceptionAscendant = target.getAscendant(function (el) {
           return el && el.getName && el.getName() === 'div' && el.hasClass('exception');
         });
