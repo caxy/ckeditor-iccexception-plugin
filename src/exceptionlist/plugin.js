@@ -7,7 +7,6 @@ import { hasList } from '../common/common';
       requires: 'widget',
       icons: 'exceptionlist',
       init: (editor) => {
-
         // If the target element has a list ancestor, dispatch a custom event with its id.
         editor.on('doubleclick', function (evt) {
           const target = evt.data.element
@@ -15,7 +14,11 @@ import { hasList } from '../common/common';
             return el && el.getName && el.getName() === 'div' && el.hasClass('exception')
           })
 
-          if (exceptionAscendant) {
+          const listDescendant = exceptionAscendant
+            ? exceptionAscendant.find('ul, ol')
+            : false
+
+          if (exceptionAscendant && listDescendant.count() > 0) {
             const wizardCreatedEvent = new CustomEvent(
               'exception-list-edit',
               { detail: exceptionAscendant.getAttribute('id') }
