@@ -136,10 +136,51 @@ var _common = __webpack_require__(0);
     requires: 'widget',
     icons: 'standardexception',
     init: function init(editor) {
+      // If the target element has a list ancestor, dispatch a custom event with its id.
+      editor.on('doubleclick', function (evt) {
+        var target = evt.data.element;
+        var exceptionAscendant = target.getAscendant(function (el) {
+          return el && el.getName && el.getName() === 'div' && el.hasClass('exception');
+        });
+
+        var listDescendant = exceptionAscendant ? exceptionAscendant.find('ul, ol') : false;
+
+        if (exceptionAscendant && listDescendant.count() === 0) {
+          var wizardCreatedEvent = new CustomEvent('exception-edit', { detail: exceptionAscendant.getAttribute('id') });
+
+          var _target = document.getElementById('exception-event-listener');
+          _target && _target.dispatchEvent(wizardCreatedEvent);
+        }
+      });
+
+      editor.on('key', function (evt) {
+        // Use getKey directly in order to ignore modifiers.
+        // Justification: http://dev.ckeditor.com/ticket/11861#comment:13
+        var domEvent = evt.data.domEvent;
+        var sel = editor.getSelection();
+        var range = sel.getRanges()[0];
+
+        if (!range || !range.collapsed) {
+          return;
+        }
+
+        var start = range.startContainer;
+        var ascendant = start.getAscendant(function (el) {
+          return el && el.getName && el.getName() === 'div' && el.hasClass('exception');
+        });
+
+        if (ascendant) {
+          // Cancel all key events so the list cannot be edited directly
+          if (typeof domEvent.cancelable !== 'boolean' || domEvent.cancelable) {
+            domEvent.preventDefault();
+          }
+        }
+      });
+
       editor.widgets.add('standardexception', {
         button: 'Add a standard exception',
 
-        template: '<div class="exception">\n            <p>\n              <span class="run_in">\n                <span class="bold">Exception:</span>\n              </span>\n              Exception content...\n            </p>\n          </div>',
+        template: '<div class="exception">\n              <p>\n                <span class="run_in">\n                  <span class="bold">Exception:</span>\n                </span>\n                Exception content...\n              </p>\n            </div>',
 
         editables: {
           content: {
