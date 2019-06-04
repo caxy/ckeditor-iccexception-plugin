@@ -136,7 +136,6 @@ var _common = __webpack_require__(0);
     requires: 'widget',
     icons: 'exceptionlist',
     init: function init(editor) {
-
       // If the target element has a list ancestor, dispatch a custom event with its id.
       editor.on('doubleclick', function (evt) {
         var target = evt.data.element;
@@ -144,7 +143,9 @@ var _common = __webpack_require__(0);
           return el && el.getName && el.getName() === 'div' && el.hasClass('exception');
         });
 
-        if (exceptionAscendant) {
+        var listDescendant = exceptionAscendant ? exceptionAscendant.find('ul, ol') : false;
+
+        if (exceptionAscendant && listDescendant.count() > 0) {
           var wizardCreatedEvent = new CustomEvent('exception-list-edit', { detail: exceptionAscendant.getAttribute('id') });
 
           var _target = document.getElementById('exception-list-event-listener');
