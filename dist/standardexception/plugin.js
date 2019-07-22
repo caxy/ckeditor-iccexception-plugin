@@ -182,15 +182,6 @@ var _common = __webpack_require__(0);
 
         template: '<div class="exception">\n              <p>\n                <span class="run_in">\n                  <span class="bold">Exception:</span>\n                </span>\n                Exception content...\n              </p>\n            </div>',
 
-        editables: {
-          content: {
-            selector: '.exception p'
-          },
-          exceptionContent: {
-            selector: '.exception_content'
-          }
-        },
-
         allowedContent: 'div(!exception); span(!run_in);',
         requiredContent: 'div(exception); span(run_in);',
 

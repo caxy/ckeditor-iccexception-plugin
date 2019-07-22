@@ -182,15 +182,6 @@ var _common = __webpack_require__(0);
 
         template: '<div class="exception">\n              <p>\n                <span class="run_in">\n                  <span class="bold">Exceptions:</span>\n                </span>\n                Add optional paragraph text here\n              </p>\n              <div class="list">\n                <ol class="no_mark">\n                  <li>\n                    <p>\n                      <span class="label">1.</span> Exception list item\n                    </p>\n                  </li>\n                  <li>\n                    <p>\n                      <span class="label">2.</span> Exception list item\n                    </p>\n                  </li>\n                </ol>\n              </div>\n            </div>',
 
-        editables: {
-          content: {
-            selector: '.exception p'
-          },
-          list: {
-            selector: 'div.list'
-          }
-        },
-
         allowedContent: 'div[id](!exception,changed_ICC); span(!run_in); div(!list);',
         requiredContent: 'div(exception); span(run_in); div(list);',
 
