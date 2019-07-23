@@ -64,15 +64,6 @@ import { hasList } from '../common/common';
               </p>
             </div>`,
 
-            editables: {
-              content: {
-                selector: '.exception p'
-              },
-              exceptionContent: {
-                selector: '.exception_content'
-              }
-            },
-
             allowedContent: 'div(!exception); span(!run_in);',
             requiredContent: 'div(exception); span(run_in);',
 
